@@ -5,7 +5,7 @@ import { schema } from "./schema.ts";
 import { MongoClient } from 'mongodb'
 
 // Connection URL
-const MONGO_URL = Deno.env.get("MONGO_URL");
+ const MONGO_URL = Deno.env.get("MONGO_URL");
 if(!MONGO_URL){
   throw new Error("MONGO_URL not stablished")
 }
