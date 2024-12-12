@@ -22,5 +22,7 @@ export const schema = `#graphql
 
   type Mutation {
     addPersona(name: String!, email: String!, number: String!, friends: [ID!]):Person
+    deletePersona(email:String!):String!
+    modifyPersona(name: String, email:String!, number: String, friends: [ID!]):Person
   }
 `;

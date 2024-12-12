@@ -70,7 +70,41 @@ export const resolvers = {
             }
 
             throw new Error("Person already exists");
-        }
+        },
             
+        deletePersona: async(_:unknown, {email}:{email: string}, context : {personsCollection: Collection<PersonModel>} ):Promise<string> => {
+            const {deletedCount} = await context.personsCollection.deleteOne({email});
+            if(deletedCount > 0){
+                return ("Person deleted")
+            } 
+
+            return ("Person not found")
+        },
+
+        modifyPersona: async(_:unknown, args: {name?:string, email:string, number?:string, friends?: String[]}, context: {personsCollection: Collection<PersonModel>}):Promise<Person|null> => {
+            const findedPerson = await context.personsCollection.findOne({email:args.email});
+        
+            if(findedPerson) {
+                const updateFields: Partial<PersonModel> = {};
+                if (args.name) updateFields.name = args.name;
+                if (args.number) updateFields.number = args.number;
+                if (args.friends) {
+                    const friendsID = args.friends.map((f) => new ObjectId(f));
+                    updateFields.friends = friendsID;
+                }
+        
+                await context.personsCollection.updateOne(
+                    { email: args.email },
+                    { $set: updateFields }
+                );
+        
+                const updatedPerson = await context.personsCollection.findOne({email: args.email});
+                if (updatedPerson) {
+                    return await fromModeltoPerson(updatedPerson, context.personsCollection);
+                }
+            }
+        
+            return null;
+        }
     }
 };
